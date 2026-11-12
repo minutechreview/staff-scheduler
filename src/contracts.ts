@@ -1,0 +1,6 @@
+export type Role = 'owner' | 'admin' | 'area_manager' | 'branch_manager' | 'employee'
+export interface Shift { id: string; employee: string; branch: string; role: string; start: string; end: string }
+export interface Schedule { branch: string; week: string; revision: number; state: 'draft' | 'published'; shifts: Shift[]; published: Shift[]; period_days: number; period_end: string; next_week: string; previous_week: string }
+export interface Policy { timezone: string; week_start: number; fiscal_start_month: number; fiscal_start_day: number; workdays: number[]; pay_cycle: 'weekly' | 'fortnightly' | 'monthly' | 'semimonthly'; pay_anchor: string; pay_split_day: number; leave_accrual: 'annual_upfront' | 'monthly' | 'daily'; max_carryover_days: number; leave_prorate_joiners: boolean; max_week_hours: number; max_day_hours: number; min_rest_hours: number; annual_leave_days: number; leave_workdays: number[] }
+export interface DemandRecord { branch: string; start: string; end: string; transactions: number; units: 'transactions'; kind: 'actual' | 'forecast'; granularity: 'interval' | 'day' | 'week'; role: string }
+export interface SourcedAnswer { answer: string; records: Record<string, unknown>[]; source: string; start: string; end: string; scope: { role: Role; branches: string[] }; refreshed_at: string; adapter: string; model_state: 'unconfigured'; read_only: true }

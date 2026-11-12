@@ -1,0 +1,10 @@
+# Offline local candidate. This inherits a previously built local image and is
+# not a reproducible substitute for the production Dockerfile or its review.
+FROM relay-customer-ordinary-local:20261101
+USER 0
+RUN rm -rf /app/server && mkdir -p /app/server
+COPY --chown=10001:10001 server/ /app/server/
+USER 10001:10001
+WORKDIR /app/server
+ENV RELAY_ORDINARY_LIVE_ENABLED=disabled RELAY_AUTH_DELIVERY=disabled
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "production_customer_app:load_application()"]

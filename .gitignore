@@ -10,7 +10,13 @@ lerna-debug.log*
 node_modules
 dist
 dist-ssr
+dist-email-preview
 *.local
+.local/
+__pycache__/
+*.pyc
+test-results/
+playwright-report/
 
 # Editor directories and files
 .vscode/*
@@ -22,3 +28,8 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+# Local credentials and databases
+.env*
+!.env.example
+*.sqlite3*

@@ -1,0 +1,18 @@
+# Local production candidate: verified official base and hash-locked Linux amd64 wheels.
+# No live activation; security review and hosted verification remain release gates.
+FROM python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
+ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RELAY_ORDINARY_LIVE_ENABLED=disabled RELAY_AUTH_DELIVERY=disabled PORT=8080
+WORKDIR /app
+COPY requirements.firebase.txt requirements.production.txt ./
+COPY requirements.lock.txt ./
+COPY wheelhouse/ /wheels/
+RUN pip install --no-index --find-links=/wheels --require-hashes --no-cache-dir -r requirements.lock.txt \
+    && pip check \
+    && rm -rf /wheels \
+    && groupadd --gid 10001 relay \
+    && useradd --uid 10001 --gid relay --no-create-home relay
+COPY server/ ./server/
+USER 10001:10001
+WORKDIR /app/server
+EXPOSE 8080
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "production_customer_app:load_application()"]

@@ -1,0 +1,13 @@
+[
+  {
+    "id": "team",
+    "name": "Team",
+    "amount_minor": 399000,
+    "currency": "LKR",
+    "interval": "month",
+    "max_branches": 3,
+    "max_active_staff": 50,
+    "trial_days": 7,
+    "trial_card_required": false
+  }
+]

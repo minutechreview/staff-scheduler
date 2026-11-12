@@ -1,0 +1,6 @@
+.email-preview-page .preview-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin:1.25rem 0}
+.email-preview-page .preview-actions .help{flex-basis:100%}
+.email-preview-page .preview-checklist{list-style:decimal;padding-left:1.3em;margin:1.25rem 0}
+.email-preview-page .preview-checklist li{padding-left:.25em;margin:.65rem 0}
+.email-preview-page .button{min-height:44px}
+.email-preview-page textarea{min-height:120px;overflow-wrap:anywhere}

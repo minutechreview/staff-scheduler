@@ -1,0 +1,103 @@
+{
+  "apiVersion": "serving.knative.dev/v1",
+  "kind": "Service",
+  "metadata": {
+    "name": "relay-api-customer",
+    "namespace": "PROPOSED_PROJECT_NUMBER_UNVERIFIED",
+    "annotations": {
+      "run.googleapis.com/ingress": "internal",
+      "run.googleapis.com/maxScale": "1"
+    }
+  },
+  "spec": {
+    "template": {
+      "metadata": {
+        "annotations": {
+          "autoscaling.knative.dev/minScale": "0",
+          "autoscaling.knative.dev/maxScale": "1",
+          "run.googleapis.com/cpu-throttling": "true",
+          "run.googleapis.com/startup-cpu-boost": "false"
+        }
+      },
+      "spec": {
+        "serviceAccountName": "relay-api-customer@relay-cust-746234651365.iam.gserviceaccount.com",
+        "containerConcurrency": 4,
+        "timeoutSeconds": 55,
+        "containers": [
+          {
+            "image": "us-central1-docker.pkg.dev/relay-cust-746234651365/relay-customer-images/relay-api@sha256:REVIEWED_IMAGE_DIGEST",
+            "ports": [
+              {
+                "containerPort": 8080
+              }
+            ],
+            "resources": {
+              "limits": {
+                "cpu": "1",
+                "memory": "512Mi"
+              }
+            },
+            "env": [
+              {
+                "name": "RELAY_CUSTOMER_LIVE_ENABLED",
+                "value": "disabled"
+              },
+              {
+                "name": "RELAY_FIREBASE_MODE",
+                "value": "customer"
+              },
+              {
+                "name": "RELAY_FIREBASE_PROJECT",
+                "value": "relay-cust-746234651365"
+              },
+              {
+                "name": "RELAY_FIRESTORE_DATABASE",
+                "value": "relay-customers"
+              },
+              {
+                "name": "RELAY_ACTIVATION_SCOPE",
+                "value": "UNAPPROVED"
+              },
+              {
+                "name": "RELAY_PUBLIC_ORIGIN",
+                "value": "https://relay-cust-746234651365.web.app"
+              },
+              {
+                "name": "RELAY_API_HOST",
+                "value": "UNVERIFIED.run.app"
+              },
+              {
+                "name": "RELAY_AUTH_API_KEY",
+                "value": "UNCONFIGURED"
+              },
+              {
+                "name": "RELAY_SYNTHETIC_ONLY",
+                "value": "false"
+              },
+              {
+                "name": "RELAY_AUTH_DELIVERY",
+                "value": "disabled"
+              },
+              {
+                "name": "RELAY_CUSTOMER_ACCEPTANCE_EMAIL",
+                "value": "owner@example.invalid"
+              },
+              {
+                "name": "RELAY_CUSTOMER_INVITE_HASH",
+                "value": "UNCONFIGURED"
+              },
+              {
+                "name": "RELAY_CUSTOMER_INVITE_EXPIRES",
+                "value": "UNCONFIGURED"
+              },
+              {
+                "name": "RELAY_CUSTOMER_ACCESS_MODE",
+                "value": "acceptance"
+              }
+            ]
+          }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,11 @@
+{
+  "status": "unapproved-local-proposal",
+  "project": "relay-cust-746234651365",
+  "database": "relay-customers",
+  "policies": [
+    {"collection_group": "signup_intents", "field": "expires_at", "retention_days": 30},
+    {"collection_group": "recovery_delivery", "field": "expires_at", "retention_days": 30},
+    {"collection_group": "auth_counters", "field": "expires_at", "retention": "one day beyond the counter window"}
+  ],
+  "notes": "Provider TTL must be explicitly configured and verified; Firestore deletion is asynchronous. Existing staging data is excluded. Do not set TTL on credential epochs or action journals until provider code expiry and recovery fencing are verified. Provider Auth identities need a separate non-destructive reconciliation and retention process."
+}

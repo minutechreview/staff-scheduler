@@ -1,0 +1,2 @@
+-r requirements.firebase.txt
+gunicorn==26.2.0

@@ -1,0 +1,6 @@
+# Offline local smoke only. This base is an existing staging image, not a release artifact.
+FROM us-central1-docker.pkg.dev/relay-saas-stg-746234651365/relay-images/relay-api@sha256:2946f659a1f41e4901b8db6ca8afe2fadcda26d961f1d4314f59189fd79bb895
+ENV RELAY_ORDINARY_LIVE_ENABLED=disabled RELAY_AUTH_DELIVERY=disabled
+COPY server/ /app/server/
+WORKDIR /app/server
+CMD ["gunicorn", "--config", "gunicorn.conf.py", "production_customer_app:load_application()"]

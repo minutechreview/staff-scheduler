@@ -1,0 +1,13 @@
+{
+  "purpose": "local-customer-auth-simulation-only",
+  "mode": "emulator",
+  "project": "demo-relay-email-actions",
+  "auth_host": "127.0.0.1:9099",
+  "firestore_host": "127.0.0.1:8089",
+  "fictional_email_domain": "review.example",
+  "action_path": "/account/action",
+  "real_delivery": false,
+  "live_activation": false,
+  "public_origin": null,
+  "real_sender": null
+}
