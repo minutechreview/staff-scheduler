@@ -148,4 +148,41 @@ class CoordinatorTests(unittest.TestCase):
         self.assertIsNotNone(self.service.unit.control_get('billing_conflicts','org-a'))
         self.assertFalse(self.billing.access(self.service.unit,{'org':'org-a'}))
 
+    def verified_fixture(self):
+        self.test_signed_webhook_is_quarantined_until_authoritative_reconciliation()
+        return self.service.unit.control_get('billing_orgs','org-a')['checkout_ref']
+
+    def signed_event(self,ref,**changes):
+        attrs={'variant_id':55,'store_id':42,'test_mode':True,'status':'active',
+               'updated_at':'2026-11-01T02:00:00Z','ends_at':None}|changes
+        raw=json.dumps({'meta':{'event_name':'subscription_updated','custom_data':{'relay_ref':ref,'workspace_id':'attacker-org'}},
+                        'data':{'type':'subscriptions','id':'19','attributes':attrs}}).encode()
+        return self.billing.webhook(raw,hmac.new(b'fixture-secret',raw,hashlib.sha256).hexdigest())
+
+    def test_known_variant_change_revokes_until_matching_checkout_evidence(self):
+        ref=self.verified_fixture()
+        self.billing.plans.append(PLAN|{'id':'other','variant_id':'56'})
+        self.signed_event(ref,variant_id=56)
+        self.assertFalse(self.billing.access(self.service.unit,{'org':'org-a'}))
+        self.assertFalse(self.service.unit.control_get('billing_refs',ref)['verified'])
+        self.provider.snapshot={'variant_id':56,'status':'active','updated_at':'2026-11-01T03:00:00Z','ends_at':None}
+        with self.assertRaises(Problem):self.billing.reconcile_organization('org-a',lambda *_:True)
+
+    def test_equal_timestamp_conflict_commits_quarantine_and_replay_stays_denied(self):
+        ref=self.verified_fixture()
+        self.assertEqual(self.signed_event(ref,status='expired',updated_at='2026-11-01T01:00:00Z')['result'],'reconciliation_required')
+        self.assertFalse(self.billing.access(self.service.unit,{'org':'org-a'}))
+        self.assertEqual(self.signed_event(ref,status='expired',updated_at='2026-11-01T01:00:00Z')['result'],'duplicate')
+        self.signed_event(ref,updated_at='2026-11-01T03:00:00Z')
+        self.assertFalse(self.billing.access(self.service.unit,{'org':'org-a'}))
+
+    def test_webhook_workspace_claim_is_ignored_and_cancellation_expires(self):
+        ref=self.verified_fixture()
+        end='2026-11-02T00:00:00Z'
+        self.signed_event(ref,status='cancelled',ends_at=end)
+        self.assertIsNone(self.service.unit.control_get('billing_orgs','attacker-org'))
+        self.assertTrue(self.billing.access(self.service.unit,{'org':'org-a'}))
+        self.service.now=lambda:datetime(2026,11,2,tzinfo=timezone.utc)
+        self.assertFalse(self.billing.access(self.service.unit,{'org':'org-a'}))
+
 if __name__=='__main__':unittest.main()

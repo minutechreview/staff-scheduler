@@ -1,0 +1,23 @@
+[
+  {
+    "name": "certifi",
+    "version": "2026.10.23",
+    "filename": "certifi-2026.10.23-py3-none-any.whl",
+    "sha256": "e9b54de76e530bb6cf0ccd036787103acb58fd42ba930ea8bf948ddbaa2f61d1",
+    "url": "https://files.pythonhosted.org/packages/32/d1/a3652fe2c19134d0d15922177821d863cbd7e842d53a21bbe7e8e3a1b5ac/certifi-2026.10.23-py3-none-any.whl"
+  },
+  {
+    "name": "opentelemetry-api",
+    "version": "1.45.1",
+    "filename": "opentelemetry_api-1.45.1-py3-none-any.whl",
+    "sha256": "b31553efa588ae44bc306f863c785c5333a9ecc091248c6ee68b4b6c87fdedfb",
+    "url": "https://files.pythonhosted.org/packages/1e/41/f7dcf80b81ee8e71c1a2b59f14208bc723edbd89ed027a73b175abf6348e/opentelemetry_api-1.45.1-py3-none-any.whl"
+  },
+  {
+    "name": "pyasn1",
+    "version": "0.6.5",
+    "filename": "pyasn1-0.6.5-py3-none-any.whl",
+    "sha256": "4017b0fce125096b8573b39c989fdb1a4b19cf761e683398184550fea0e66587",
+    "url": "https://files.pythonhosted.org/packages/19/1f/3eefd5c84c35cae44549ce1c7f7e58f7945b34f5a6bce07a135438522073/pyasn1-0.6.5-py3-none-any.whl"
+  }
+]

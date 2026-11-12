@@ -74,11 +74,17 @@ class BillingCoordinator:
                 if updated<old:
                     c.control_put('billing_events',digest,{'result':'stale'});return {'result':'stale'}
                 if updated==old:
-                    require(previous.get('provider_status')==status and previous.get('variant')==variant and previous.get('ends_at')==ends,
-                            'Subscription requires reconciliation.',409)
+                    consistent=(previous.get('provider_status')==status and previous.get('variant')==variant and previous.get('ends_at')==ends)
+                    if not consistent:
+                        # Commit quarantine instead of rolling back with an error
+                        # that would leave the prior active entitlement intact.
+                        c.control_put('billing_refs',ref,binding|{'verified':False})
+                        c.control_put('billing_orgs',org,previous|{'status':'reconciliation_required'})
+                        c.control_put('billing_events',digest,{'result':'reconciliation_required'})
+                        return {'result':'reconciliation_required'}
                     c.control_put('billing_events',digest,{'result':'duplicate_snapshot'});return {'result':'duplicate_snapshot'}
             known=variant in {str(p['variant_id']) for p in self.plans}
-            verified=bool(binding.get('verified')) and known and not c.control_get('billing_conflicts',org)
+            verified=bool(binding.get('verified')) and known and variant==str(binding.get('variant','')) and not c.control_get('billing_conflicts',org)
             c.control_put('billing_refs',ref,binding|{'state':'bound','subscription':sub,'verified':verified})
             c.control_put('billing_subscriptions',sub,{'org':org})
             c.control_put('billing_orgs',org,{'subscription':sub,'checkout_ref':ref,'variant':variant,'provider_status':status,
@@ -217,7 +223,8 @@ class BillingCoordinator:
         # custom checkout data alone is not an authoritative tenant binding.
         require(verifier(org,before,before_binding,snapshot) is True,'Subscription binding requires review.',409)
         status=snapshot.get('status');variant=str(snapshot.get('variant_id',''))
-        require(status in STATUSES and variant in {str(p['variant_id']) for p in self.plans},'Subscription requires review.',409)
+        require(status in STATUSES and variant in {str(p['variant_id']) for p in self.plans} and
+                variant==str(before_binding.get('variant','')),'Subscription requires review.',409)
         updated=parse_time(snapshot.get('updated_at'));ends=snapshot.get('ends_at')
         if ends is not None:parse_time(ends)
         def apply(c):
@@ -283,6 +290,7 @@ class BillingCoordinator:
                 self.service.now()>=parse_time(old_snapshot['ends_at']) and
                 parse_time(old_snapshot.get('updated_at'))>=parse_time(old['updated_at']) and
                 new_status in STATUSES and new_variant in {str(p['variant_id']) for p in self.plans} and
+                new_variant==str(new_binding.get('variant','')) and
                 parse_time(new_snapshot.get('updated_at'))>=parse_time(current['updated_at']) and
                 verifier(org,before,old_snapshot,new_snapshot) is True,
                 'Subscription conflict requires review.',409)
