@@ -1,0 +1,64 @@
+{
+  "indexes": [
+    {
+      "collectionGroup": "versions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "week",
+          "order": "ASCENDING"
+        }
+      ]
+    },
+    {
+      "collectionGroup": "reservations",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "branch",
+          "order": "ASCENDING"
+        },
+        {
+          "fieldPath": "week",
+          "order": "ASCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": [
+    {
+      "collectionGroup": "snapshots",
+      "fieldPath": "shifts",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "reservations",
+      "fieldPath": "shifts",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "entities_employee",
+      "fieldPath": "availability",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "entities_employee",
+      "fieldPath": "skills",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "policies",
+      "fieldPath": "policy",
+      "indexes": []
+    },
+    {
+      "collectionGroup": "organizations",
+      "fieldPath": "settings",
+      "indexes": []
+    }
+  ]
+}

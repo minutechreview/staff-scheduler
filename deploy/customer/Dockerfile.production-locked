@@ -1,13 +1,18 @@
 # Local production candidate: verified official base and hash-locked Linux amd64 wheels.
 # No live activation; security review and hosted verification remain release gates.
-FROM python:3.14.4-slim@sha256:2ca02f32b4d9d893863367ce07ec1972819f476dd38d8612f2a9cb6a41cbb727
+FROM python:3.14-slim@sha256:9aaa474097d094040649f2162a627c0049b408f52138d980916788d80f04802f
 ENV PYTHONDONTWRITEBYTECODE=1 PYTHONUNBUFFERED=1 RELAY_ORDINARY_LIVE_ENABLED=disabled RELAY_AUTH_DELIVERY=disabled PORT=8080
 WORKDIR /app
+COPY os-packages/zlib.deb /tmp/zlib.deb
+RUN echo "8c27c342230503b73dfde629642c3b352e87b554e06d60cf58772f236a305ceb  /tmp/zlib.deb" | sha256sum -c - \
+    && dpkg -i /tmp/zlib.deb && rm /tmp/zlib.deb
 COPY requirements.firebase.txt requirements.production.txt ./
 COPY requirements.lock.txt ./
 COPY wheelhouse/ /wheels/
 RUN pip install --no-index --find-links=/wheels --require-hashes --no-cache-dir -r requirements.lock.txt \
     && pip check \
+    && python -m pip uninstall -y pip \
+    && rm -rf /usr/local/lib/python3.14/ensurepip \
     && rm -rf /wheels \
     && groupadd --gid 10001 relay \
     && useradd --uid 10001 --gid relay --no-create-home relay
